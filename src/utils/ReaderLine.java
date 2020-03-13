@@ -5,8 +5,16 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class ReaderLine {
+   /** End of File(파일의 끝) */
    static final int EOF = -1;
    
+   /**
+    * 데이터를 가지고 와서 섹션별로 분류를 하는 함수.
+    * 
+    * @param data 파일 내용.
+    * @return 섹션별 {@code Score}[][]
+    * @throws IOException 
+    */
    public static String[][] fileLine(FileReader data) throws IOException {
       Vector<String[]> str = new Vector<String[]>();
       String[] info = null;

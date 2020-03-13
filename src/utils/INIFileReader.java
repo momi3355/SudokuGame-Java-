@@ -29,6 +29,7 @@ final public class INIFileReader extends ReaderLine {
     * INIFileReader의 생성자.
     * 
     * @param data 확장자(.ini)파일의 읽을 수 있는 파일
+    * @throws IOException 입출력 예외
     */
    public INIFileReader(FileReader data) throws IOException {
       String[][] fileData = fileLine(data);

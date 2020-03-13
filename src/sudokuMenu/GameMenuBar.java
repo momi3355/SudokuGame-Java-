@@ -14,7 +14,9 @@ import sudokuGame.SudokuValue.GameLevel;
  * ┣━{@code nomalGameMenuItem}(보통(N))<br>
  * ┣━{@code hardGameMenuItem}(어려움(H))<br>
  * ┣━{@code separator()} //분리선<br>
- * ┣━{@code scoreMenuItem}(기록(S)...)<br>
+ * ┣━{@code scoresMenuItem}(기록...)<br>
+ * ┣━{@code separator()} //분리선<br>
+ * ┣━{@code settingsMenuItem}(설정(S))<br>
  * ┣━{@code separator()} //분리선<br>
  * ┗━{@code exitGame}(끝내기(X))<br>
  * </p>
@@ -27,7 +29,8 @@ public class GameMenuBar extends SudokuMenu {
          "새 게임(F2)",
          "보통(N)",
          "어려움(H)",
-         "기록(T)...",
+         "기록..",
+         "설정(S)",
          "끝내기(X)"
    };
    
@@ -39,7 +42,7 @@ public class GameMenuBar extends SudokuMenu {
       
       for (int i = 0; i < GameItem.length; i++) {
          add(menuItem.get(i));
-         if (i == 0 || i == 2 || i == 3)
+         if (i == 0 || i == 2 || i == 3 || i == 4)
             addSeparator();
       }
    }
@@ -63,10 +66,13 @@ public class GameMenuBar extends SudokuMenu {
          if (!SudokuValue.level.equals(GameLevel.hard))
             SudokuValue.level = GameLevel.hard;
          break;
-      case 3: //기록(S)
+      case 3: //기록
          SudokuValue.showScore();
          break;
-      case 4: //끝내기(X)
+      case 4: //설정(S)
+         new SudokuSettings();
+         break;
+      case 5: //끝내기(X)
          WindowsSetting.windowExit();
          break;
       default:
@@ -75,10 +81,3 @@ public class GameMenuBar extends SudokuMenu {
       }
    }
 }
-
-
-
-
-
-
-

@@ -261,7 +261,6 @@ final class SudokuFile {
                }
             }
          } //end for (int i = 0; i < topScore.size(); i++);
-         
          return isNewRecord;
       }
       

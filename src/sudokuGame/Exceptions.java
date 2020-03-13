@@ -60,7 +60,7 @@ abstract class DetailException extends TextException {
 class SectionNameWrongException extends DetailException {
    SectionNameWrongException(String section) {
       super("파일을 읽는 도중에 섹션의 이름이 잘못되어 있습니다.", section);
-      setDetailMessage("Wrong Part : "+getText()+" ����");
+      setDetailMessage("Wrong Part : "+getText()+" 섹션");
    }
 }
 

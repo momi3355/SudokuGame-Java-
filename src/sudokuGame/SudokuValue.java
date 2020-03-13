@@ -263,6 +263,67 @@ public class SudokuValue {
    } //end interface IBackGround;
    
    /**
+    * 스도쿠 설정에 대한 클래스
+    * <p>
+    * [values]섹션에서 읽고, 쓰고<br>
+    * 설정 바꾸는거는 {@code SudokuSettings}에서 한다.
+    * </p>
+    * @author 이창현(momi3355@hotmail.com)
+    */
+   public static class Settings {
+      //TODO: 변수들 [values]섹션 .ini에서 읽고, 써야함.
+      /** 타이머의 설정 */
+      static Timer timer = Timer.second;
+      /** 플래이 타입의 설정 */
+      static PlayType playType = PlayType.cellFirst;
+      /** 노트의 활성화 설정 */
+      static boolean isNoteEnabled = true;
+      /** 리셋 다이얼로그의 설정 */
+      static boolean isResetDialogEnabled = true;
+      
+      /** 타이머 설정 열거형 */
+      public enum Timer { second, minute }
+      /** 플래이 타입 설정 열거형 */
+      public enum PlayType { digitFirst, cellFirst }
+
+      /**
+       * {@code isNoteEnabled}값을 리턴한다.
+       * 
+       * @return noteEnabled
+       */
+      public static boolean isNoteEnabled() {
+         return isNoteEnabled;
+      }
+      
+      /**
+       * {@code isResetDialogEnabled}값을 리턴한다.
+       * 
+       * @return resetDialogEnabled
+       */
+      public static boolean isResetDialogEnabled() {
+         return isResetDialogEnabled;
+      }
+      
+      /**
+       * {@code Timer} 열거형의 {@code toString()}을 리턴하는 함수.
+       * 
+       * @return 열거형의 .{@code toString()};
+       */
+      public static String getTimer() {
+         return timer.toString();
+      }
+      
+      /**
+       * {@code PlayType} 열거형의 {@code toString()}을 리턴하는 함수.
+       * 
+       * @return 열거형의 .{@code toString()};
+       */
+      public static String getPlayType() {
+         return playType.toString();
+      }
+   } //end class Settings;
+   
+   /**
     * 게임 난이도나, 타이머를 출력하는 라벨을 초기화 하는 클래스.
     * 
     * @author 이창현(momi3355@hotmail.com)
@@ -302,7 +363,6 @@ public class SudokuValue {
          }
       }
    } //end class ScoreLabel;
-
    
    /**
     * 스도쿠해결의 알고리즘의 대한 클래스.
