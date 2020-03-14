@@ -23,7 +23,7 @@ import utils.LogFileWriter.LogLevel;
  */
 final class SudokuFile {
    /** 날자를 저장하는 글자 포멧. */
-   public static final SimpleDateFormat DATE = new SimpleDateFormat("yyyy-MM-dd(E) a hh:mm:ss");
+   public static final SimpleDateFormat DATE = new SimpleDateFormat("yyyy-MM-dd(E)HH:mm:ss");
    /**
     * 스도쿠의 설정파일 이름.
     * <p>
@@ -124,7 +124,7 @@ final class SudokuFile {
        */
       private static String[] initScore(GameLevel level) {
          String[] initScore = {
-               String.valueOf(level), "0000-00-00(  )      00:00:00", "999 초"
+               String.valueOf(level), "0000-00-00(  )00:00:00", "999 초"
          };
          return initScore;
       }
@@ -441,7 +441,7 @@ final class SudokuFile {
                switch (Section.Key.TopScore.valueOf(valuesData[i][0])) {
                case NormalScore:
                case HardScore:
-                  final String[] scoreInfo = valuesData[i][1].split(", ");
+                  final String[] scoreInfo = valuesData[i][1].split(",");
                   if (isScoreFormat(scoreInfo)) { //포멧이 맞는 경우.
                      SudokuScore.newRecord(scoreInfo);
                   }
@@ -468,7 +468,7 @@ final class SudokuFile {
             try {
                switch (Section.Key.Latest.valueOf(valuesData[i][0])) {
                case LatestScore:
-                  final String[] scoreInfo = valuesData[i][1].split(", ");
+                  final String[] scoreInfo = valuesData[i][1].split(",");
                   if (isScoreFormat(scoreInfo)) {
                      //현재 로컬시간의 2개월 전 계산.
                      Calendar cal = Calendar.getInstance();
@@ -485,7 +485,7 @@ final class SudokuFile {
                throw new EnumNotFoundException(valuesData[i][0], Section.Name.Latest.toString());
             } catch (ParseException e) {
                //이미 isScoreFormat()을 지났기 때문에 발생가능성은 없을 것이다.
-               String[] scoreInfo = valuesData[i][1].split(", ");
+               String[] scoreInfo = valuesData[i][1].split(",");
                SudokuValue.log.write(LogLevel.FATAL, getName(),
                      "파일 읽는 도중에 시간이 잘못 되어 있습니다.\r\n"
                      +StringLarge.space(5)+"Wrong Part : "+scoreInfo[Data.day.index]);
@@ -522,7 +522,6 @@ final class SudokuFile {
          SudokuScore.initTopScore(); //topScore 초기화;
          load = new LoadFile(new FileReader(FILE_NAME));
          load.values();    //Values 섹션 읽기.
-         valuesLogging();
          load.topScore(); //TopScore 섹션 읽기.
          load.latest();  //Latest 섹션 읽기.
       } catch (FileNotFoundException e) { //파일이 없을 때.

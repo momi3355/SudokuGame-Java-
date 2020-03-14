@@ -42,7 +42,7 @@ final public class INIFileReader extends ReaderLine {
       
       /* [내용 초기화] */
       for (int i = 0; i < section.length; i++) {
-         this.data.add(StringLarge.arraySplit(fileData[i][1].split("\n"), " = "));
+         this.data.add(StringLarge.arraySplit(fileData[i][1].split("\n"), "="));
       }
       
       /* [읽기 스트림 닫기] */

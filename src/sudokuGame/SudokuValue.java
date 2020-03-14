@@ -764,7 +764,7 @@ public class SudokuValue {
       
       //[TopScore]
       massage = "[TopScore]\n";
-      massage += "_____________________________________________\n";
+      massage += "_______________________________________\n";
       final String[][] topScore = SudokuFile.SudokuScore.getTopScore();
       for (int i = 0; i < topScore.length; i++) {
          massage += String.format("%-8s %s %6s\n",
@@ -775,7 +775,7 @@ public class SudokuValue {
       
       //[Latest]
       massage += "\n[Latest]\n";
-      massage += "_____________________________________________\n";
+      massage += "_______________________________________\n";
       final String[][] latest = SudokuFile.SudokuScore.getLatestScore();
       if (latest != null) {
          for (int i = 0; i < latest.length; i++) {
