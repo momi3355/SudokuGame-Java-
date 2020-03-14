@@ -271,7 +271,7 @@ public class SudokuValue {
     * @author 이창현(momi3355@hotmail.com)
     */
    public static class Settings {
-      //TODO: 변수들 [values]섹션 .ini에서 읽고, 써야함.
+      //TODO: 언어 변경 변수 추가 요함
       /** 타이머의 설정 */
       static Timer timer = Timer.second;
       /** 플래이 타입의 설정 */

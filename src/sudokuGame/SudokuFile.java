@@ -99,7 +99,7 @@ final class SudokuFile {
        * @author 이창현(momi3355@hotmail.com)
        */
       static class Key {
-         enum Values { DefaultLevel }
+         enum Values { DefaultLevel, TimerType, PlayType, NoteEnabled, ResetDialogEnabled }
          enum TopScore { NormalScore, HardScore }
          enum Latest { LatestScore }
       } //end class Value;
@@ -310,6 +310,19 @@ final class SudokuFile {
       }
       
       /**
+       * {@code String}을 통해서 boolean을 리턴하는 함수.
+       * 
+       * @param name boolean.toString();
+       * @return {@code String}을 boolean으로 변환후 리턴
+       * @throws IllegalArgumentException
+       */
+      private boolean getBoolean(String name) throws IllegalArgumentException {
+         if (!(name.equals("false") || name.equals("true")))
+            throw new IllegalArgumentException();
+         return Boolean.parseBoolean(name);
+      }
+      
+      /**
        * 섹션 Values의 읽는 함수.
        * 
        * @throws EnumNotFoundException Enum의 원소 예외
@@ -325,11 +338,44 @@ final class SudokuFile {
                case DefaultLevel:
                   try {
                      SudokuValue.level = GameLevel.valueOf(valuesData[i][1]);
-                  } catch (IllegalArgumentException e) { //값이 잘못 되어을때.
+                  } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
                      SudokuValue.level = GameLevel.normal;
                      throw e;
                   } finally {
                      SudokuValue.levelLabel.setText(SudokuValue.level.getText());
+                  }
+                  break;
+               case TimerType:
+                  try {
+                     SudokuValue.Settings.timer = SudokuValue.Settings.Timer.valueOf(valuesData[i][1]);
+                  } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
+                     SudokuValue.Settings.timer = SudokuValue.Settings.Timer.second;
+                     throw e;
+                  }
+                  break;
+               case PlayType:
+                  try {
+                     SudokuValue.Settings.playType = 
+                           SudokuValue.Settings.PlayType.valueOf(valuesData[i][1]);
+                  } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
+                     SudokuValue.Settings.playType = SudokuValue.Settings.PlayType.cellFirst;
+                     throw e;
+                  }
+                  break;
+               case NoteEnabled:
+                  try {
+                     SudokuValue.Settings.isNoteEnabled = getBoolean(valuesData[i][1]);
+                  } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
+                     SudokuValue.Settings.isNoteEnabled = true;
+                     throw e;
+                  }
+                  break;
+               case ResetDialogEnabled:
+                  try {
+                     SudokuValue.Settings.isResetDialogEnabled = getBoolean(valuesData[i][1]);
+                  } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
+                     SudokuValue.Settings.isResetDialogEnabled = true;
+                     throw e;
                   }
                   break;
                }
@@ -450,7 +496,23 @@ final class SudokuFile {
          SudokuScore.SortLatestScore(false);
       }
    } //end class LoadFile;
-
+   
+   /**
+    * [디버그용] value섹션 값의 logging하는 함수.
+    */
+   @Deprecated
+   @SuppressWarnings("unused")
+   private static void valuesLogging() {
+      SudokuValue.log.write(LogLevel.DEBUG, getName(), "timerType - "
+            +SudokuValue.Settings.getTimer());
+      SudokuValue.log.write(LogLevel.DEBUG, getName(), "playType - "
+            +SudokuValue.Settings.getPlayType());
+      SudokuValue.log.write(LogLevel.DEBUG, getName(), "noteEnabled - "
+            +SudokuValue.Settings.isNoteEnabled());
+      SudokuValue.log.write(LogLevel.DEBUG, getName(), "ResetDialogEnabled - "
+            +SudokuValue.Settings.isResetDialogEnabled());
+   }
+   
    /**
     * ..SudokuGame.ini에 대한 파일 읽기 함수.
     */
@@ -460,6 +522,7 @@ final class SudokuFile {
          SudokuScore.initTopScore(); //topScore 초기화;
          load = new LoadFile(new FileReader(FILE_NAME));
          load.values();    //Values 섹션 읽기.
+         valuesLogging();
          load.topScore(); //TopScore 섹션 읽기.
          load.latest();  //Latest 섹션 읽기.
       } catch (FileNotFoundException e) { //파일이 없을 때.
@@ -518,6 +581,11 @@ final class SudokuFile {
       void values() throws IOException {
          data.write("[Valuse]"+CRLF); //섹션의 제목
          data.write(Section.Key.Values.DefaultLevel+" = "+SudokuValue.level+CRLF); //처음시작 난이도
+         data.write(Section.Key.Values.TimerType+" = "+SudokuValue.Settings.getTimer()+CRLF);
+         data.write(Section.Key.Values.PlayType+" = "+SudokuValue.Settings.getPlayType()+CRLF);
+         data.write(Section.Key.Values.NoteEnabled+" = "+SudokuValue.Settings.isNoteEnabled()+CRLF);
+         data.write(Section.Key.Values.ResetDialogEnabled+" = "
+                     +SudokuValue.Settings.isResetDialogEnabled()+CRLF);
       }
       
       /**

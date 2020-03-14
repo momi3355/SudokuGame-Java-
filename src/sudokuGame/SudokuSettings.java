@@ -8,7 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
- * TODO: 주석 입력 요함
+ * 스도쿠 설정을 바꾸는 {@code JFrame}클래스.
+ * 
+ * @author 이창현(momi3355@hotmail.com)
  */
 @SuppressWarnings("serial")
 public class SudokuSettings extends JFrame {
