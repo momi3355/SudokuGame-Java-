@@ -21,6 +21,7 @@ import javax.swing.border.Border;
 
 import sudokuGame.SudokuFile.SudokuScore;
 import utils.LogFileWriter;
+import utils.StringLarge;
 import utils.Timer;
 
 /**
@@ -282,9 +283,24 @@ public class SudokuValue {
       static boolean isResetDialogEnabled = true;
       
       /** 타이머 설정 열거형 */
-      public enum Timer { second, minute }
+      public enum Timer { second, minute;
+         public static String[] valuestoString() {
+            String[] toString = new String[values().length];
+            for (int i = 0; i < toString.length; i++)
+               toString[i] = StringLarge.capitalize(values()[i].toString());
+            return toString;
+         }
+      } //end enum Timer;
+      
       /** 플래이 타입 설정 열거형 */
-      public enum PlayType { digitFirst, cellFirst }
+      public enum PlayType { digitFirst, cellFirst;
+         public static String[] valuestoString() {
+            String[] toString = new String[values().length];
+            for (int i = 0; i < toString.length; i++)
+               toString[i] = StringLarge.capitalize(values()[i].toString());
+            return toString;
+         }
+      } //end enum PlayType;
 
       /**
        * {@code isNoteEnabled}값을 리턴한다.
