@@ -293,7 +293,7 @@ public class SudokuValue {
       } //end enum Timer;
       
       /** 플래이 타입 설정 열거형 */
-      public enum PlayType { digitFirst, cellFirst;
+      public enum PlayType { cellFirst, digitFirst;
          public static String[] valuestoString() {
             String[] toString = new String[values().length];
             for (int i = 0; i < toString.length; i++)
@@ -773,46 +773,6 @@ public class SudokuValue {
    }
    
    /**
-    * 점수를 다이얼로그(Dialog)로 출력하는 함수.
-    */
-   public static void showScore() {
-      String massage = "";
-      
-      //[TopScore]
-      massage = "[TopScore]\n";
-      massage += "_______________________________________\n";
-      final String[][] topScore = SudokuFile.SudokuScore.getTopScore();
-      for (int i = 0; i < topScore.length; i++) {
-         massage += String.format("%-8s %s %6s\n",
-               topScore[i][SudokuFile.Data.level.index].toUpperCase(),
-               topScore[i][SudokuFile.Data.day.index],
-               topScore[i][SudokuFile.Data.score.index]);
-      }
-      
-      //[Latest]
-      massage += "\n[Latest]\n";
-      massage += "_______________________________________\n";
-      final String[][] latest = SudokuFile.SudokuScore.getLatestScore();
-      if (latest != null) {
-         for (int i = 0; i < latest.length; i++) {
-            massage += String.format("%-8s %s %6s\n",
-                  latest[i][SudokuFile.Data.level.index].toUpperCase(),
-                  latest[i][SudokuFile.Data.day.index],
-                  latest[i][SudokuFile.Data.score.index]);
-         }
-      } else massage += "\n";
-      massage += "\n";
-      
-      //기본글꼴을 저장한다.
-      //가변 폭 때문에 OptionPane의 글꼴을 변경해준다.
-      Font defaultFont = (Font)UIManager.get("OptionPane.messageFont");
-      UIManager.put("OptionPane.messageFont", new Font("돋움체", Font.PLAIN, 14));
-      
-      JOptionPane.showMessageDialog(null, massage, "점수", JOptionPane.PLAIN_MESSAGE);
-      UIManager.put("OptionPane.messageFont", defaultFont);
-   }
-   
-   /**
     * 스도쿠의 정답은 {@code getName()}에 저장 되어있기 때문에,
     * name을 불러오면 된다.
     */
@@ -890,6 +850,51 @@ public class SudokuValue {
       chooceNum.clear();
       setNums();
       startTimer();
+   }
+   
+   /**
+    * 각각 점수({@code TopScore}, {@code LatestScore})를 다이얼로그로 출력하는 함수.
+    */
+   public static void showScore() {
+      String massage = "";
+      /* [TopScore] */
+      massage += showScore(SudokuFile.SudokuScore.getTopScore(),
+      /* [Latest] */       SudokuFile.Section.Name.TopScore.toString());
+      massage += showScore(SudokuFile.SudokuScore.getLatestScore(),
+                           SudokuFile.Section.Name.Latest.toString());
+      //기본글꼴을 저장한다.
+      //가변 폭 때문에 OptionPane의 글꼴을 변경해준다.
+      Font defaultFont = (Font)UIManager.get("OptionPane.messageFont");
+      UIManager.put("OptionPane.messageFont", new Font("돋움체", Font.PLAIN, 14));
+      
+      JOptionPane.showMessageDialog(null, massage, "점수", JOptionPane.PLAIN_MESSAGE);
+      UIManager.put("OptionPane.messageFont", defaultFont);
+   }
+
+   /**
+    * 점수를 다이얼로그로 출력할수 있게 {@code String}으로 리턴하는 함수.
+    * <p>
+    * {@code String}에서 <code>sctionName</code>을 입력하고,
+    *       <code>scoreInfo</code>를 <code>massage</code>에 저장하고 리턴하는 함수.
+    * </p>
+    * @param score 스도쿠의 점수
+    * @param sectionName 점수가 저장되어있는 섹션이름
+    * @return 점수 다이얼로그에 출력할 수 있는 {@code String}
+    */
+   private static String showScore(final String[][] scoreInfo, String sectionName) {
+      String massage = "";
+      massage = "["+sectionName+"]\n";
+      massage += "_______________________________________\n";
+      if (scoreInfo != null) {
+         for (int i = 0; i < scoreInfo.length; i++) {
+            massage += String.format("%-8s %s %6s\n",
+                  scoreInfo[i][SudokuFile.IScoreInfo.LEVEL].toUpperCase(),
+                  scoreInfo[i][SudokuFile.IScoreInfo.DAY],
+                  scoreInfo[i][SudokuFile.IScoreInfo.SCORE]);
+         }
+      }
+      massage += "\n";
+      return massage;
    }
    
    /**

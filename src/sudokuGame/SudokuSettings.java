@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import utils.LogFileWriter.LogLevel;
+import utils.StringLarge;
 
 /**
  * 스도쿠 설정을 바꾸는 {@code JFrame}클래스.
@@ -30,30 +31,20 @@ public class SudokuSettings extends JFrame implements ActionListener {
    Component[][] components = new Component[4][2];
    
    /**
-    * 컴퍼넌트의 타입에 대한 열거형.
+    * 컴퍼넌트의 타입에 대한 인터페이스.
     * 
     * @author 이창현(momi3355@hotmail.com)
     */
-   enum Com {
+   private interface ICompType {
       /** 타이머 */
-      Time(0), 
+      int TIME = 0;
       /** 플래이 타입 */
-      PlayType(1),
+      int PLAY_TYPE= 1;
       /** 노트의 활성화 */
-      NoteEnabled(2),
+      int NOTE_ENABLED = 2;
       /** 리셋 다이얼로그 */
-      ResetDialogEnabled(3);
-      
-      private int index;
-      
-      private Com(int index) {
-         this.index = index;
-      }
-
-      public int getIndex() {
-         return index;
-      }
-   } //end enum Com;
+      int RESET_DIALOG = 3;
+   } //end interface ICompType;
    
    /**
     * {@code SudokuSettings}의 생성자.
@@ -61,7 +52,6 @@ public class SudokuSettings extends JFrame implements ActionListener {
    public SudokuSettings() {
       super("스도쿠 설정");
       setSize(new Dimension(250, 245));
-      
       initComponents(components); //components 초기화
       
       Container c = getContentPane();
@@ -79,11 +69,15 @@ public class SudokuSettings extends JFrame implements ActionListener {
     * @param com component[][]
     */
    private void initComponents(Component[][] com) {
+      JComboBox<String> comBox = new JComboBox<String>(SudokuValue.Settings.Timer.valuestoString());
+      comBox.setSelectedItem(StringLarge.capitalize(SudokuValue.Settings.getTimer()));
       com[0][0] = new JLabel("시간", SwingConstants.RIGHT);
-      com[0][1] = new JComboBox<String>(SudokuValue.Settings.Timer.valuestoString());
-      
+      com[0][1] = comBox;
+                         
+      comBox = new JComboBox<String>(SudokuValue.Settings.PlayType.valuestoString());
+      comBox.setSelectedItem(StringLarge.capitalize(SudokuValue.Settings.getPlayType()));
       com[1][0] = new JLabel("플래이 타입", SwingConstants.RIGHT);
-      com[1][1] = new JComboBox<String>(SudokuValue.Settings.PlayType.valuestoString());
+      com[1][1] = comBox;
       
       com[2][0] = new JLabel("노트 활성화", SwingConstants.RIGHT);
       com[2][1] = new JCheckBox("", SudokuValue.Settings.isNoteEnabled());
@@ -135,21 +129,21 @@ public class SudokuSettings extends JFrame implements ActionListener {
    public void actionPerformed(ActionEvent e) {
       for (int i = 0; i < components.length; i++) {
          if (components[i][1] instanceof JComboBox) {
-            @SuppressWarnings("unchecked") //instanceof로 검사를 했기때문에 cast에러는 나지않는다.
-            JComboBox<String> source = (JComboBox<String>)components[i][1];
+            //JComboBox<String>;
+            JComboBox<?> source = (JComboBox<?>)components[i][1];
             //capitalize한걸 다시 푼다.
             String selectItem = ((String)source.getSelectedItem()).substring(0, 1).toLowerCase()
                               + ((String)source.getSelectedItem()).substring(1);
-            if (i == Com.Time.getIndex()) {
+            if (i == ICompType.TIME) {
                SudokuValue.Settings.timer = SudokuValue.Settings.Timer.valueOf(selectItem);
-            } else if (i == Com.PlayType.getIndex()) {
+            } else if (i == ICompType.PLAY_TYPE) {
                SudokuValue.Settings.playType = SudokuValue.Settings.PlayType.valueOf(selectItem);
             }
          } else if (components[i][1] instanceof JCheckBox) {
             boolean selected = ((JCheckBox)components[i][1]).isSelected();
-            if (i == Com.NoteEnabled.getIndex()) {
+            if (i == ICompType.NOTE_ENABLED) {
                SudokuValue.Settings.isNoteEnabled = selected;
-            } else if (i == Com.ResetDialogEnabled.getIndex()) {
+            } else if (i == ICompType.RESET_DIALOG) {
                SudokuValue.Settings.isResetDialogEnabled = selected;
             }
          } //end if (components[i][1] instanceof JComboBox);

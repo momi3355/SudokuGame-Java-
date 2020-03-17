@@ -42,7 +42,7 @@ public class LogFileWriter {
       ERROR,
       /** 치명적 요류 로그 */
       FATAL,
-   }
+   } //end enum LogLevel;
    
    /**
     * 데이터 포맷이 있는 인터페이스.
