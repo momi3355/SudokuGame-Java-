@@ -23,6 +23,7 @@ import sudokuGame.SudokuFile.SudokuScore;
 import utils.LogFileWriter;
 import utils.StringLarge;
 import utils.Timer;
+import utils.Timer.TimerType;
 
 /**
  * 스도쿠의 게임의 값들을 저장되는 클래스.
@@ -50,7 +51,7 @@ public class SudokuValue {
     * </p>
     * @see ScoreLabel
     */
-   static ScoreLabel timerLabel = new ScoreLabel("000", 55, 35);
+   static ScoreLabel timerLabel = new ScoreLabel("000", 65, 35);
    /**
     * 스도쿠의 시간을 측정할려고 있는 타이머.
     * <p>
@@ -274,23 +275,13 @@ public class SudokuValue {
    public static class Settings {
       //TODO: 언어 변경 변수 추가 요함
       /** 타이머의 설정 */
-      static Timer timer = Timer.second;
+      static TimerType timerType = TimerType.second;
       /** 플래이 타입의 설정 */
       static PlayType playType = PlayType.cellFirst;
       /** 노트의 활성화 설정 */
       static boolean isNoteEnabled = true;
       /** 리셋 다이얼로그의 설정 */
       static boolean isResetDialogEnabled = true;
-      
-      /** 타이머 설정 열거형 */
-      public enum Timer { second, minute;
-         public static String[] valuestoString() {
-            String[] toString = new String[values().length];
-            for (int i = 0; i < toString.length; i++)
-               toString[i] = StringLarge.capitalize(values()[i].toString());
-            return toString;
-         }
-      } //end enum Timer;
       
       /** 플래이 타입 설정 열거형 */
       public enum PlayType { cellFirst, digitFirst;
@@ -321,12 +312,12 @@ public class SudokuValue {
       }
       
       /**
-       * {@code Timer} 열거형의 {@code toString()}을 리턴하는 함수.
+       * {@code TimerType} 열거형의 {@code toString()}을 리턴하는 함수.
        * 
        * @return 열거형의 .{@code toString()};
        */
-      public static String getTimer() {
-         return timer.toString();
+      public static String getTimerType() {
+         return timerType.toString();
       }
       
       /**
@@ -887,7 +878,7 @@ public class SudokuValue {
       massage += "_______________________________________\n";
       if (scoreInfo != null) {
          for (int i = 0; i < scoreInfo.length; i++) {
-            massage += String.format("%-8s %s %6s\n",
+            massage += String.format("%-8s %s %7s\n",
                   scoreInfo[i][SudokuFile.IScoreInfo.LEVEL].toUpperCase(),
                   scoreInfo[i][SudokuFile.IScoreInfo.DAY],
                   scoreInfo[i][SudokuFile.IScoreInfo.SCORE]);

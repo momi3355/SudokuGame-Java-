@@ -115,7 +115,7 @@ final class SudokuFile {
        */
       private static String[] initScore(GameLevel level) {
          String[] initScore = {
-               String.valueOf(level), "0000-00-00(  )00:00:00", "999 초"
+               String.valueOf(level), "0000-00-00(  )00:00:00", "99:99"
          };
          return initScore;
       }
@@ -234,17 +234,13 @@ final class SudokuFile {
        */
       static boolean newRecord(String[] scoreInfo) {
          boolean isNewRecord = false;
-         
+
          for (int i = 0; i < topScore.size(); i++) {
             //레벨(게임 난이도)이 같을 때.
             if (topScore.get(i)[IScoreInfo.LEVEL].equals(scoreInfo[IScoreInfo.LEVEL])) {
                //신기록 일때.
-               int scoreX = Integer.parseUnsignedInt(
-                     scoreInfo[IScoreInfo.SCORE].
-                     substring(0, scoreInfo[IScoreInfo.SCORE].indexOf("초") - 1));
-               int scoreY = Integer.parseUnsignedInt(
-                     topScore.get(i)[IScoreInfo.SCORE].
-                     substring(0, topScore.get(i)[IScoreInfo.SCORE].indexOf("초") - 1));
+               int scoreX = Timer.toSecond(scoreInfo[IScoreInfo.SCORE]);
+               int scoreY = Timer.toSecond(topScore.get(i)[IScoreInfo.SCORE]);
                
                if (scoreX < scoreY) { //입력 안된 기록이 작을 때.
                   topScore.set(i, scoreInfo);
@@ -269,7 +265,7 @@ final class SudokuFile {
          String[] scoreInfo = new String[3];
          scoreInfo[IScoreInfo.LEVEL] = String.valueOf(SudokuValue.level);
          scoreInfo[IScoreInfo.DAY] = DATE.format(today);
-         scoreInfo[IScoreInfo.SCORE] = String.format("%03d 초", score);
+         scoreInfo[IScoreInfo.SCORE] = Timer.toMinute(SudokuValue.timer.getTime());
          
          putlatest(scoreInfo);
          return newRecord(scoreInfo);
@@ -365,8 +361,9 @@ final class SudokuFile {
                   SudokuValue.levelLabel.setText(SudokuValue.level.getText());
                   break;
                case TimerType:
-                  SudokuValue.Settings.timer = 
-                        valuesCheck(SudokuValue.Settings.timer, valuesData[i][1]);
+                  SudokuValue.Settings.timerType = 
+                        valuesCheck(SudokuValue.Settings.timerType, valuesData[i][1]);
+                  SudokuValue.timer.setType(SudokuValue.Settings.timerType);
                   break;
                case PlayType:
                   SudokuValue.Settings.playType = 
@@ -413,12 +410,12 @@ final class SudokuFile {
          }
          
          //scoreInfo[2] 점수.
-         //점수 " 초"를 제외한 숫자 String을 int로 변환
          try {
-            int score = Integer.parseUnsignedInt(
-               scoreInfo[IScoreInfo.SCORE].substring(0, scoreInfo[IScoreInfo.SCORE].indexOf("초") - 1));
-            if (!(score >= 0 && score <= 999)) { //0 ~ 999가 아닌 경우
+            int score = Timer.toSecond(scoreInfo[IScoreInfo.SCORE]);
+            if (!(score >= 0 && score <= Timer.MAX_MINUTE)) { //0 ~ 6039가 아닌 경우
                throw new ScoreFormatException("점수", scoreInfo[IScoreInfo.SCORE]);
+            } else {
+               scoreInfo[IScoreInfo.SCORE] = Timer.toMinute(score); //재정렬
             }
          } catch (NumberFormatException e) { //아무것도 없거나, 숫자가 아닌 경우.
             throw new ScoreFormatException("점수의 숫자", scoreInfo[IScoreInfo.SCORE]);
@@ -436,7 +433,7 @@ final class SudokuFile {
        */
       void topScore() throws ScoreFormatException, EnumNotFoundException, FileEmptyException {
          final String[][] valuesData = setting.getData(Section.Name.TopScore.getIndex());
-         
+
          for (int i = 0; i < valuesData.length; i++) {
             if (valuesData[i][0].isEmpty()) continue; //아무 것도 없으면, 다음.
             try {
@@ -506,7 +503,7 @@ final class SudokuFile {
    @SuppressWarnings("unused")
    private static void valuesLogging() {
       SudokuValue.log.write(LogLevel.DEBUG, getName(), "timerType - "
-            +SudokuValue.Settings.getTimer());
+            +SudokuValue.Settings.getTimerType());
       SudokuValue.log.write(LogLevel.DEBUG, getName(), "playType - "
             +SudokuValue.Settings.getPlayType());
       SudokuValue.log.write(LogLevel.DEBUG, getName(), "noteEnabled - "
@@ -582,7 +579,7 @@ final class SudokuFile {
       void values() throws IOException {
          data.write("[Values]"+CRLF); //섹션의 제목
          data.write(Section.Key.Values.DefaultLevel+" = "+SudokuValue.level+CRLF); //처음시작 난이도
-         data.write(Section.Key.Values.TimerType+" = "+SudokuValue.Settings.getTimer()+CRLF);
+         data.write(Section.Key.Values.TimerType+" = "+SudokuValue.Settings.getTimerType()+CRLF);
          data.write(Section.Key.Values.PlayType+" = "+SudokuValue.Settings.getPlayType()+CRLF);
          data.write(Section.Key.Values.NoteEnabled+" = "+SudokuValue.Settings.isNoteEnabled()+CRLF);
          data.write(Section.Key.Values.ResetDialogEnabled+" = "
@@ -599,7 +596,7 @@ final class SudokuFile {
          data.write("[TopScore]"+CRLF); //섹션의 제목
          for (int i = 0; i < SudokuScore.getTopScore().length; i++) {
             final String[] scoreInfo = SudokuScore.getTopScore(GameLevel.getIndex(i));
-            if (scoreInfo[IScoreInfo.SCORE] != "999 초") { //최대값이 아니면,
+            if (scoreInfo[IScoreInfo.SCORE] != "99:99") { //최대값이 아니면,
                String valueName = StringLarge.capitalize(GameLevel.getIndex(i).toString())
                      + StringLarge.capitalize("score");
                //ex) NormalScore

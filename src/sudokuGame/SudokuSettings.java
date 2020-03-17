@@ -17,8 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import sudokuGame.SudokuValue.Settings.PlayType;
 import utils.LogFileWriter.LogLevel;
 import utils.StringLarge;
+import utils.Timer.TimerType;
 
 /**
  * 스도쿠 설정을 바꾸는 {@code JFrame}클래스.
@@ -69,12 +71,12 @@ public class SudokuSettings extends JFrame implements ActionListener {
     * @param com component[][]
     */
    private void initComponents(Component[][] com) {
-      JComboBox<String> comBox = new JComboBox<String>(SudokuValue.Settings.Timer.valuestoString());
-      comBox.setSelectedItem(StringLarge.capitalize(SudokuValue.Settings.getTimer()));
+      JComboBox<String> comBox = new JComboBox<String>(TimerType.valuestoString());
+      comBox.setSelectedItem(StringLarge.capitalize(SudokuValue.Settings.getTimerType()));
       com[0][0] = new JLabel("시간", SwingConstants.RIGHT);
       com[0][1] = comBox;
                          
-      comBox = new JComboBox<String>(SudokuValue.Settings.PlayType.valuestoString());
+      comBox = new JComboBox<String>(PlayType.valuestoString());
       comBox.setSelectedItem(StringLarge.capitalize(SudokuValue.Settings.getPlayType()));
       com[1][0] = new JLabel("플래이 타입", SwingConstants.RIGHT);
       com[1][1] = comBox;
@@ -135,9 +137,10 @@ public class SudokuSettings extends JFrame implements ActionListener {
             String selectItem = ((String)source.getSelectedItem()).substring(0, 1).toLowerCase()
                               + ((String)source.getSelectedItem()).substring(1);
             if (i == ICompType.TIME) {
-               SudokuValue.Settings.timer = SudokuValue.Settings.Timer.valueOf(selectItem);
+               SudokuValue.Settings.timerType = TimerType.valueOf(selectItem);
+               SudokuValue.timer.setType(SudokuValue.Settings.timerType);
             } else if (i == ICompType.PLAY_TYPE) {
-               SudokuValue.Settings.playType = SudokuValue.Settings.PlayType.valueOf(selectItem);
+               SudokuValue.Settings.playType = PlayType.valueOf(selectItem);
             }
          } else if (components[i][1] instanceof JCheckBox) {
             boolean selected = ((JCheckBox)components[i][1]).isSelected();
@@ -151,7 +154,7 @@ public class SudokuSettings extends JFrame implements ActionListener {
       
       //Logging.
       SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "timer = "
-            +SudokuValue.Settings.getTimer());
+            +SudokuValue.Settings.getTimerType());
       SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "playType = "
             +SudokuValue.Settings.getPlayType());
       SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "noteEnabled = "
