@@ -21,7 +21,9 @@ import javax.swing.border.Border;
 
 import sudokuGame.SudokuFile.SudokuScore;
 import utils.LogFileWriter;
+import utils.StringLarge;
 import utils.Timer;
+import utils.Timer.TimerType;
 
 /**
  * 스도쿠의 게임의 값들을 저장되는 클래스.
@@ -49,7 +51,7 @@ public class SudokuValue {
     * </p>
     * @see ScoreLabel
     */
-   static ScoreLabel timerLabel = new ScoreLabel("000", 55, 35);
+   static ScoreLabel timerLabel = new ScoreLabel("000", 65, 35);
    /**
     * 스도쿠의 시간을 측정할려고 있는 타이머.
     * <p>
@@ -58,6 +60,11 @@ public class SudokuValue {
     * @see TimerLabel
     */
    static Timer timer = new Timer(timerLabel);
+   /** 
+    * 스토쿠의 파일 시스템이랑 관련된 변수이다.
+    * 
+    * @see SudokuFile
+    */
    static SudokuFile file = new SudokuFile();
    /**
     * 스도쿠의 실제로 들어가는 값이다.({@code JButon}으로 저장한다.)
@@ -65,6 +72,12 @@ public class SudokuValue {
     * @see JButton
     */
    static SudokuNum[][] nums = new SudokuNum[MAX_NUM][MAX_NUM];
+   /**
+    * {@code NumPadBtn}의 값이 들어가 있는 변수.
+    * 
+    * @see NumPadBtn
+    */
+   static NumPadBtn[][] numpad = new NumPadBtn[2][6];
    /**
     * 전부 두 가지이상의 경우의 수가 있으면, {@code nums}의 데이터를 저장하고 첫번째 수로 한다음 못풀면,<br>
     * {@code tempNums}를 마지막값(Last)을 불려와서 {@code nums}에 복제 한다음 두번째 수로 푸는 식으로 사용이 된다.
@@ -263,6 +276,71 @@ public class SudokuValue {
    } //end interface IBackGround;
    
    /**
+    * 스도쿠 설정에 대한 클래스
+    * <p>
+    * [values]섹션에서 읽고, 쓰고<br>
+    * 설정 바꾸는거는 {@code SudokuSettings}에서 한다.
+    * </p>
+    * @author 이창현(momi3355@hotmail.com)
+    */
+   public static class Settings {
+      /** 타이머의 설정 */
+      static TimerType timerType = TimerType.second;
+      /** 플래이 타입의 설정 */
+      static PlayType playType = PlayType.cellFirst;
+      /** 노트의 활성화 설정 */
+      static boolean isNoteEnabled = true;
+      /** 리셋 다이얼로그의 설정 */
+      static boolean isResetDialogEnabled = true;
+      
+      /** 플래이 타입 설정 열거형 */
+      public enum PlayType { cellFirst, digitFirst;
+         public static String[] valuestoString() {
+            String[] toString = new String[values().length];
+            for (int i = 0; i < toString.length; i++)
+               toString[i] = StringLarge.capitalize(values()[i].toString());
+            return toString;
+         }
+      } //end enum PlayType;
+
+      /**
+       * {@code isNoteEnabled}값을 리턴한다.
+       * 
+       * @return noteEnabled
+       */
+      public static boolean isNoteEnabled() {
+         return isNoteEnabled;
+      }
+      
+      /**
+       * {@code isResetDialogEnabled}값을 리턴한다.
+       * 
+       * @return resetDialogEnabled
+       */
+      public static boolean isResetDialogEnabled() {
+         return isResetDialogEnabled;
+      }
+      
+      /**
+       * {@code TimerType} 열거형의 {@code toString()}을 리턴하는 함수.
+       * 
+       * @return 열거형의 .{@code toString()};
+       */
+      public static String getTimerType() {
+         return timerType.toString();
+      }
+      
+      /**
+       * {@code PlayType} 열거형의 {@code toString()}을 리턴하는 함수.
+       * 
+       * @return 열거형의 .{@code toString()};
+       */
+      public static String getPlayType() {
+         return playType.toString();
+      }
+   } //end class Settings;
+   
+   /**
     * 게임 난이도나, 타이머를 출력하는 라벨을 초기화 하는 클래스.
     * 
     * @author 이창현(momi3355@hotmail.com)
@@ -302,7 +380,6 @@ public class SudokuValue {
          }
       }
    } //end class ScoreLabel;
-
    
    /**
     * 스도쿠해결의 알고리즘의 대한 클래스.
@@ -625,17 +702,16 @@ public class SudokuValue {
     * @param numPad {@code JPanel}
     */
    static void initNumPad(JPanel numPad) {
-      NumPadBtn[][] num = new NumPadBtn[2][6];
       String[] val = {
             "1", "2", "3", "4", "5", "6",
             "7", "8", "9", "N", "E", "C"
       };
       int x = 0;
-      for (int i = 0; i < num.length; i++) {
-         for (int j = 0; j < num[i].length; j++) {
-            num[i][j] = new NumPadBtn(val[x++]);
+      for (int i = 0; i < numpad.length; i++) {
+         for (int j = 0; j < numpad[i].length; j++) {
+            numpad[i][j] = new NumPadBtn(val[x++]);
             
-            numPad.add(num[i][j]);
+            numPad.add(numpad[i][j]);
          }
       }
    }
@@ -697,46 +773,6 @@ public class SudokuValue {
    }
    
    /**
-    * 점수를 다이얼로그(Dialog)로 출력하는 함수.
-    */
-   public static void showScore() {
-      String massage = "";
-      
-      //[TopScore]
-      massage = "[TopScore]\n";
-      massage += "_____________________________________________\n";
-      final String[][] topScore = SudokuFile.SudokuScore.getTopScore();
-      for (int i = 0; i < topScore.length; i++) {
-         massage += String.format("%-8s %s %6s\n",
-               topScore[i][SudokuFile.Data.level.index].toUpperCase(),
-               topScore[i][SudokuFile.Data.day.index],
-               topScore[i][SudokuFile.Data.score.index]);
-      }
-      
-      //[Latest]
-      massage += "\n[Latest]\n";
-      massage += "_____________________________________________\n";
-      final String[][] latest = SudokuFile.SudokuScore.getLatestScore();
-      if (latest != null) {
-         for (int i = 0; i < latest.length; i++) {
-            massage += String.format("%-8s %s %6s\n",
-                  latest[i][SudokuFile.Data.level.index].toUpperCase(),
-                  latest[i][SudokuFile.Data.day.index],
-                  latest[i][SudokuFile.Data.score.index]);
-         }
-      } else massage += "\n";
-      massage += "\n";
-      
-      //기본글꼴을 저장한다.
-      //가변 폭 때문에 OptionPane의 글꼴을 변경해준다.
-      Font defaultFont = (Font)UIManager.get("OptionPane.messageFont");
-      UIManager.put("OptionPane.messageFont", new Font("돋움체", Font.PLAIN, 14));
-      
-      JOptionPane.showMessageDialog(null, massage, "점수", JOptionPane.PLAIN_MESSAGE);
-      UIManager.put("OptionPane.messageFont", defaultFont);
-   }
-   
-   /**
     * 스도쿠의 정답은 {@code getName()}에 저장 되어있기 때문에,
     * name을 불러오면 된다.
     */
@@ -761,6 +797,7 @@ public class SudokuValue {
     * 2. 스코어 추가<br>
     * 3. 다 풀었으면, 자국을 지운다.<br>
     * 4. {@code SudokuAction.Start}를 <code>false</code>로 변경해준다.<br>
+    * 5. number pad의 note기능을 off시킨다.<br>
     * </p>
     * @param isAnswer 힌트나 정답을 보는 경우 = <code>true</code><br>
     *  직접 다 사람이 푼경우 = <code>false</code>
@@ -775,6 +812,7 @@ public class SudokuValue {
          isNewRecode = SudokuScore.addScore(new Date(), timer.getTime()); //스코어 추가
       IBackGround.clear(); //다 풀었으면, 자국을 지운다.
       SudokuAction.setStart(false); //끝났므로, false로 변경해준다.
+      NumPadBtn.resetNoteEnabled(numpad); //number pad의 note기능을 off시킨다.
       return isNewRecode;
    }
    
@@ -790,7 +828,7 @@ public class SudokuValue {
       
       if (!levelLabel.getText().equals(level.getText()))
          levelLabel.setText(level.getText());
-      for (int n = 0; n < level.getShowNum(); n++) { //level.getShowNum()
+      for (int n = 0; n < level.getShowNum(); n++) {
          int tempX = 0; int tempY = 0;
          do {
             tempX = new Random().nextInt(MAX_NUM);
@@ -805,7 +843,6 @@ public class SudokuValue {
             nums[i][j].setFont((shape[i][j] == 1) 
                   ? new Font("Default", Font.BOLD, 12)
                   : new Font("Default", Font.PLAIN, 12));
-            
             IBackGround.setNumBackground(i, j);
          }
       }
@@ -814,6 +851,51 @@ public class SudokuValue {
       chooceNum.clear();
       setNums();
       startTimer();
+   }
+   
+   /**
+    * 각각 점수({@code TopScore}, {@code LatestScore})를 다이얼로그로 출력하는 함수.
+    */
+   public static void showScore() {
+      String massage = "";
+      /* [TopScore] */
+      massage += showScore(SudokuFile.SudokuScore.getTopScore(),
+      /* [Latest] */       SudokuFile.Section.Name.TopScore.toString());
+      massage += showScore(SudokuFile.SudokuScore.getLatestScore(),
+                           SudokuFile.Section.Name.Latest.toString());
+      //기본글꼴을 저장한다.
+      //가변 폭 때문에 OptionPane의 글꼴을 변경해준다.
+      Font defaultFont = (Font)UIManager.get("OptionPane.messageFont");
+      UIManager.put("OptionPane.messageFont", new Font("돋움체", Font.PLAIN, 14));
+      
+      JOptionPane.showMessageDialog(null, massage, "점수", JOptionPane.PLAIN_MESSAGE);
+      UIManager.put("OptionPane.messageFont", defaultFont);
+   }
+
+   /**
+    * 점수를 다이얼로그로 출력할수 있게 {@code String}으로 리턴하는 함수.
+    * <p>
+    * {@code String}에서 <code>sctionName</code>을 입력하고,
+    *       <code>scoreInfo</code>를 <code>massage</code>에 저장하고 리턴하는 함수.
+    * </p>
+    * @param score 스도쿠의 점수
+    * @param sectionName 점수가 저장되어있는 섹션이름
+    * @return 점수 다이얼로그에 출력할 수 있는 {@code String}
+    */
+   private static String showScore(final String[][] scoreInfo, String sectionName) {
+      String massage = "";
+      massage = "["+sectionName+"]\n";
+      massage += "_______________________________________\n";
+      if (scoreInfo != null) {
+         for (int i = 0; i < scoreInfo.length; i++) {
+            massage += String.format("%-8s %s %7s\n",
+                  scoreInfo[i][SudokuFile.IScoreInfo.LEVEL].toUpperCase(),
+                  scoreInfo[i][SudokuFile.IScoreInfo.DAY],
+                  scoreInfo[i][SudokuFile.IScoreInfo.SCORE]);
+         }
+      }
+      massage += "\n";
+      return massage;
    }
    
    /**

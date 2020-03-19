@@ -11,6 +11,7 @@ import java.util.Vector;
  */
 final public class INIFileReader extends ReaderLine {
    private Vector<String[][]> data = new Vector<String[][]>();
+   /** 섹션의 이름이 저장되는 변수. */
    private String[] section;
    
    /**
@@ -29,6 +30,7 @@ final public class INIFileReader extends ReaderLine {
     * INIFileReader의 생성자.
     * 
     * @param data 확장자(.ini)파일의 읽을 수 있는 파일
+    * @throws IOException 입출력 예외
     */
    public INIFileReader(FileReader data) throws IOException {
       String[][] fileData = fileLine(data);
@@ -41,7 +43,7 @@ final public class INIFileReader extends ReaderLine {
       
       /* [내용 초기화] */
       for (int i = 0; i < section.length; i++) {
-         this.data.add(StringLarge.arraySplit(fileData[i][1].split("\n"), " = "));
+         this.data.add(StringLarge.arraySplit(fileData[i][1].split("\n"), "="));
       }
       
       /* [읽기 스트림 닫기] */

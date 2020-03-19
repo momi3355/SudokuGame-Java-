@@ -16,7 +16,6 @@ public class StringLarge {
       String str = "";
       for (int i = 0; i < spaceNum; i++)
          str += " ";
-      
       return str;
    }
    
@@ -52,10 +51,8 @@ public class StringLarge {
     */
    public static String[][] arraySplit(String[] str, String regex) {
       String[][] value = new String[str.length][];
-      for (int i = 0; i < str.length; i++) {
+      for (int i = 0; i < str.length; i++)
          value[i] = str[i].split(regex);
-      }
-      
       return value;
    }
 }
