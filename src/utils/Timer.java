@@ -13,9 +13,13 @@ public class Timer extends Thread {
    /** 6039s = 99m99s */
    public static final int MAX_MINUTE = toSecond("99:99");
    
+   /** {@code time}을 표시하는 {@code JLabel} */
    private JLabel label;
+   /** 타이머 설정을 저장하는 변수. */
    private TimerType type;
+   /** 타이머의 값이 저장되는 변수. */
    private int time;
+   /** 타이머가 활성화 된지 확인 하는 변수. */
    private boolean isEnabled;
    
    /** 타이머 설정 열거형 */
@@ -43,18 +47,41 @@ public class Timer extends Thread {
       this.isEnabled = true;
    }
    
+   /**
+    * 타이머가 활성화 된지 확인 하는 함수.
+    * 
+    * @return 타이머 활성화
+    */
    public boolean isEnabled() {
       return isEnabled;
    }
    
+   /**
+    * 타이머의 값을 리턴 하는 함수.
+    * 
+    * @return 타이머의 값(second)
+    */
    public int getTime() {
       return time - 1;
    }
    
+   /**
+    * 타이머 설정을 리턴하는 함수.
+    * 
+    * @return 타이머 설정
+    */
    public TimerType getType() {
       return type;
    }
    
+   /**
+    * 타이머의 설정의 재설정하는 함수.
+    * <p>
+    * 타이머의 설정의 재설정하고,<br>
+    * {@code label}의 text를 {@code TimerType}포맷에 맞게 설정한다. 
+    * </p>
+    * @param type 타이머 설정
+    */
    public void setType(TimerType type) {
       this.type = type;
       switch (this.type) {

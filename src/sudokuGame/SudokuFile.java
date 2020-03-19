@@ -234,7 +234,6 @@ final class SudokuFile {
        */
       static boolean newRecord(String[] scoreInfo) {
          boolean isNewRecord = false;
-
          for (int i = 0; i < topScore.size(); i++) {
             //레벨(게임 난이도)이 같을 때.
             if (topScore.get(i)[IScoreInfo.LEVEL].equals(scoreInfo[IScoreInfo.LEVEL])) {
@@ -278,6 +277,7 @@ final class SudokuFile {
     * @author 이창현(momi3355@hotmail.com)
     */
    private static class LoadFile {
+      /** .ini File의 데이터. */
       private INIFileReader setting;
       
       /**
@@ -323,6 +323,7 @@ final class SudokuFile {
          try {
             if (value instanceof Enum) { //열거형 이면.
                try {
+                  //GameLevel or TimerType or PlayType
                   value = (E)Enum.valueOf(((Enum<?>)value).getClass(), data);
                   //System.out.println(value+", "+((Enum<?>)value).getClass().getSimpleName());
                } catch (IllegalArgumentException e) { //값이 잘못 되어을 때.
@@ -334,6 +335,7 @@ final class SudokuFile {
                   value = (E)getBoolean(data);
                } catch (IllegalArgumentException e) {
                   value = (E)Boolean.TRUE; //true
+                  throw new EnumNotFoundException(data, Section.Name.Values.toString());
                }
             }
          } catch (EnumNotFoundException e) {

@@ -66,7 +66,7 @@ public class SudokuSettings extends JFrame implements ActionListener {
    }
    
    /**
-    * Component들을 초기화하는 함수.
+    * {@code Component}들을 초기화하는 함수.
     * 
     * @param com component[][]
     */
@@ -89,9 +89,9 @@ public class SudokuSettings extends JFrame implements ActionListener {
    }
    
    /**
-    * Setting의 메인 페널을 셋팅하고, 리턴하는 함수.
+    * {@code Setting}의 메인 페널을 셋팅하고, 리턴하는 함수.
     * 
-    * @return Setting의 메인 페널
+    * @return {@code Setting}의 메인 페널
     */
    private JPanel getMainPanel() {
       JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
@@ -123,6 +123,22 @@ public class SudokuSettings extends JFrame implements ActionListener {
       
       return panel;
    }
+
+   /**
+    * [디버그용] SudokuValue.Setting값의 logging하는 함수.
+    */
+   @Deprecated
+   @SuppressWarnings("unused")
+   private void settingLogging() {
+      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "timer = "
+            +SudokuValue.Settings.getTimerType());
+      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "playType = "
+            +SudokuValue.Settings.getPlayType());
+      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "noteEnabled = "
+            +SudokuValue.Settings.isNoteEnabled());
+      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "resetDialogEnabled = "
+            +SudokuValue.Settings.isResetDialogEnabled());
+   }
    
    /**
     * {@code Setting}화면의 commit버튼의 이벤트 함수.
@@ -146,21 +162,17 @@ public class SudokuSettings extends JFrame implements ActionListener {
             boolean selected = ((JCheckBox)components[i][1]).isSelected();
             if (i == ICompType.NOTE_ENABLED) {
                SudokuValue.Settings.isNoteEnabled = selected;
+               try {
+                  NumPadBtn.resetNoteEnabled(SudokuValue.numpad);
+               } catch (NoteFatalError exception) {
+                  exception.printStackTrace();
+                  setVisible(false);
+               }
             } else if (i == ICompType.RESET_DIALOG) {
                SudokuValue.Settings.isResetDialogEnabled = selected;
             }
          } //end if (components[i][1] instanceof JComboBox);
       } //end for (int i = 0; i < components.length; i++);
-      
-      //Logging.
-      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "timer = "
-            +SudokuValue.Settings.getTimerType());
-      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "playType = "
-            +SudokuValue.Settings.getPlayType());
-      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "noteEnabled = "
-            +SudokuValue.Settings.isNoteEnabled());
-      SudokuValue.log.write(LogLevel.DEBUG, getClass().getSimpleName(), "resetDialogEnabled = "
-            +SudokuValue.Settings.isResetDialogEnabled());
       setVisible(false); //settting의 Frame 숨기기.
    }
 }

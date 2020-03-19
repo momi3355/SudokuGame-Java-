@@ -60,6 +60,11 @@ public class SudokuValue {
     * @see TimerLabel
     */
    static Timer timer = new Timer(timerLabel);
+   /** 
+    * 스토쿠의 파일 시스템이랑 관련된 변수이다.
+    * 
+    * @see SudokuFile
+    */
    static SudokuFile file = new SudokuFile();
    /**
     * 스도쿠의 실제로 들어가는 값이다.({@code JButon}으로 저장한다.)
@@ -67,6 +72,12 @@ public class SudokuValue {
     * @see JButton
     */
    static SudokuNum[][] nums = new SudokuNum[MAX_NUM][MAX_NUM];
+   /**
+    * {@code NumPadBtn}의 값이 들어가 있는 변수.
+    * 
+    * @see NumPadBtn
+    */
+   static NumPadBtn[][] numpad = new NumPadBtn[2][6];
    /**
     * 전부 두 가지이상의 경우의 수가 있으면, {@code nums}의 데이터를 저장하고 첫번째 수로 한다음 못풀면,<br>
     * {@code tempNums}를 마지막값(Last)을 불려와서 {@code nums}에 복제 한다음 두번째 수로 푸는 식으로 사용이 된다.
@@ -273,7 +284,6 @@ public class SudokuValue {
     * @author 이창현(momi3355@hotmail.com)
     */
    public static class Settings {
-      //TODO: 언어 변경 변수 추가 요함
       /** 타이머의 설정 */
       static TimerType timerType = TimerType.second;
       /** 플래이 타입의 설정 */
@@ -692,17 +702,16 @@ public class SudokuValue {
     * @param numPad {@code JPanel}
     */
    static void initNumPad(JPanel numPad) {
-      NumPadBtn[][] num = new NumPadBtn[2][6];
       String[] val = {
             "1", "2", "3", "4", "5", "6",
             "7", "8", "9", "N", "E", "C"
       };
       int x = 0;
-      for (int i = 0; i < num.length; i++) {
-         for (int j = 0; j < num[i].length; j++) {
-            num[i][j] = new NumPadBtn(val[x++]);
+      for (int i = 0; i < numpad.length; i++) {
+         for (int j = 0; j < numpad[i].length; j++) {
+            numpad[i][j] = new NumPadBtn(val[x++]);
             
-            numPad.add(num[i][j]);
+            numPad.add(numpad[i][j]);
          }
       }
    }
@@ -788,6 +797,7 @@ public class SudokuValue {
     * 2. 스코어 추가<br>
     * 3. 다 풀었으면, 자국을 지운다.<br>
     * 4. {@code SudokuAction.Start}를 <code>false</code>로 변경해준다.<br>
+    * 5. number pad의 note기능을 off시킨다.<br>
     * </p>
     * @param isAnswer 힌트나 정답을 보는 경우 = <code>true</code><br>
     *  직접 다 사람이 푼경우 = <code>false</code>
@@ -802,6 +812,7 @@ public class SudokuValue {
          isNewRecode = SudokuScore.addScore(new Date(), timer.getTime()); //스코어 추가
       IBackGround.clear(); //다 풀었으면, 자국을 지운다.
       SudokuAction.setStart(false); //끝났므로, false로 변경해준다.
+      NumPadBtn.resetNoteEnabled(numpad); //number pad의 note기능을 off시킨다.
       return isNewRecode;
    }
    
@@ -817,7 +828,7 @@ public class SudokuValue {
       
       if (!levelLabel.getText().equals(level.getText()))
          levelLabel.setText(level.getText());
-      for (int n = 0; n < level.getShowNum(); n++) { //level.getShowNum()
+      for (int n = 0; n < level.getShowNum(); n++) {
          int tempX = 0; int tempY = 0;
          do {
             tempX = new Random().nextInt(MAX_NUM);
@@ -832,7 +843,6 @@ public class SudokuValue {
             nums[i][j].setFont((shape[i][j] == 1) 
                   ? new Font("Default", Font.BOLD, 12)
                   : new Font("Default", Font.PLAIN, 12));
-            
             IBackGround.setNumBackground(i, j);
          }
       }

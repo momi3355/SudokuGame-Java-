@@ -123,6 +123,17 @@ class SelectNumsNotFoundException extends Exception {
 }
 
 /**
+ * note기능이 제대로 작동이 안 되는 예외클래스.
+ */
+@SuppressWarnings("serial")
+class NoteFatalError extends RuntimeException {
+   NoteFatalError() {
+      super("note를 재설정하는데, 치명적인 에러가 났습니다.");
+      SudokuValue.log.write(LogLevel.FATAL, getClass().getSimpleName(), getMessage());
+      JOptionPane.showMessageDialog(null, getMessage(), "note 에러", JOptionPane.ERROR_MESSAGE);
+   }
+}
+/**
  * 스토쿠를 해결하지 못하는 예외클래스.
  * <p>
  * 스토쿠를 만드는 데 컴퓨터가 풀 수 없는 경우 발생하는 예외처리.

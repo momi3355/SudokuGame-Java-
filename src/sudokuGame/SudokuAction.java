@@ -3,6 +3,8 @@ package sudokuGame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import sudokuGame.SudokuValue.Settings.PlayType;
+
 /**
  * 스도쿠의 마우스이벤트(MouseEvent)에 대한 클래스이다.
  * 
@@ -34,7 +36,14 @@ public class SudokuAction implements ActionListener {
          SudokuValue.setBoard();
          isStart = true;
       } else if (SudokuValue.timer.isEnabled()) { //게임 중..
-         SudokuValue.IBackGround.alterationColor(x, y);
-      }
+         if (SudokuValue.Settings.playType == PlayType.cellFirst)
+            SudokuValue.IBackGround.alterationColor(x, y);
+         else if (SudokuValue.Settings.playType == PlayType.digitFirst) {
+            if (NumPadBtn.isSelectedNum()) {
+               SudokuValue.nums[x][y].setText(NumPadBtn.selectedNum().getText());
+               SudokuValue.IBackGround.alterationColor(x, y);
+            }
+         }
+      } //end if (!isStart);
    }
 }

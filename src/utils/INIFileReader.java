@@ -11,6 +11,7 @@ import java.util.Vector;
  */
 final public class INIFileReader extends ReaderLine {
    private Vector<String[][]> data = new Vector<String[][]>();
+   /** 섹션의 이름이 저장되는 변수. */
    private String[] section;
    
    /**
