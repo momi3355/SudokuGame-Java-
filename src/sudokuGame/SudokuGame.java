@@ -16,7 +16,6 @@ import sudokuMenu.*;
 /**
  * 수학게임의 수도쿠를 자바로 구현한 것이다.
  * 
- * @version v1.00.0
  * @author 이창현(momi3355@hotmail.com)
  */
 public class SudokuGame extends JFrame {
