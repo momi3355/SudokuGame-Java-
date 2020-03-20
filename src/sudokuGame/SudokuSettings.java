@@ -63,6 +63,7 @@ public class SudokuSettings extends JFrame implements ActionListener {
       
       setVisible(true);
       setResizable(false); //Frame 크기변경불가
+      setLocationRelativeTo(null); //화면 정중앙 배치
    }
    
    /**

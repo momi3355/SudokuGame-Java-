@@ -1,5 +1,6 @@
 package sudokuGame;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,7 +41,8 @@ public class SudokuAction implements ActionListener {
             SudokuValue.IBackGround.alterationColor(x, y);
          else if (SudokuValue.Settings.playType == PlayType.digitFirst) {
             if (NumPadBtn.isSelectedNum()) {
-               SudokuValue.nums[x][y].setText(NumPadBtn.selectedNum().getText());
+               if (SudokuValue.nums[x][y].getFont().getStyle() != Font.BOLD)
+                  SudokuValue.nums[x][y].setText(NumPadBtn.selectedNum().getText());
                SudokuValue.IBackGround.alterationColor(x, y);
             }
          }
